@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NVCA Federal Grants Database</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <!-- Netlify Identity -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <div class="logo-mark">NVCA</div>
+                <h1>Federal Grants Database</h1>
+            </div>
+            <div class="header-actions">
+                <button id="auth-btn" class="btn btn-secondary">Login</button>
+                <span id="user-info" style="display: none;"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Statistics Dashboard -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid" id="stats-container">
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-total">0</div>
+                    <div class="stat-label">Total Grants</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-open">0</div>
+                    <div class="stat-label">Open Now</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-agencies">0</div>
+                    <div class="stat-label">Agencies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="stat-funding">$0</div>
+                    <div class="stat-label">Total Available Funding</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search and Filters -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search grants by title, agency, description, or opportunity number...">
+                <button id="search-btn" class="btn btn-primary">Search</button>
+            </div>
+            
+            <div class="filters-grid">
+                <div class="filter-group">
+                    <label for="filter-agency">Agency</label>
+                    <select id="filter-agency">
+                        <option value="">All Agencies</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-category">Category</label>
+                    <select id="filter-category">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-status">Status</label>
+                    <select id="filter-status">
+                        <option value="">All Statuses</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-funding">Funding Range</label>
+                    <select id="filter-funding">
+                        <option value="">All Ranges</option>
+                        <option value="under-100k">Under $100K</option>
+                        <option value="100k-500k">$100K - $500K</option>
+                        <option value="500k-1m">$500K - $1M</option>
+                        <option value="1m-5m">$1M - $5M</option>
+                        <option value="5m-10m">$5M - $10M</option>
+                        <option value="over-10m">Over $10M</option>
+                        <option value="unspecified">Amount Not Specified</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-instrument">Funding Type</label>
+                    <select id="filter-instrument">
+                        <option value="">All Types</option>
+                        <option value="Grant">Grant</option>
+                        <option value="Cooperative Agreement">Cooperative Agreement</option>
+                        <option value="Procurement Contract">Procurement Contract</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-deadline">Close Date</label>
+                    <select id="filter-deadline">
+                        <option value="">All Deadlines</option>
+                        <option value="week">Next 7 Days</option>
+                        <option value="month">Next 30 Days</option>
+                        <option value="quarter">Next 3 Months</option>
+                        <option value="halfyear">Next 6 Months</option>
+                        <option value="year">Next Year</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-costshare">Cost Sharing</label>
+                    <select id="filter-costshare">
+                        <option value="">Any</option>
+                        <option value="no">No Cost Sharing</option>
+                        <option value="yes">Cost Sharing Required</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="filter-cfda">CFDA Number</label>
+                    <input type="text" id="filter-cfda" placeholder="e.g., 47.075">
+                </div>
+            </div>
+            
+            <div class="filter-actions">
+                <button id="clear-filters" class="btn btn-outline">Clear Filters</button>
+                <button id="export-results" class="btn btn-outline">Export Results</button>
+                <span id="results-count">Showing 0 grants</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grants Table -->
+    <section class="grants-section">
+        <div class="container">
+            <div class="table-wrapper">
+                <table id="grants-table">
+                    <thead>
+                        <tr>
+                            <th data-sort="title">Title</th>
+                            <th data-sort="agency">Agency</th>
+                            <th data-sort="category">Category</th>
+                            <th data-sort="funding_instrument">Type</th>
+                            <th data-sort="award_ceiling">Max Award</th>
+                            <th data-sort="close_date">Close Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="grants-tbody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination" id="pagination">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Grant Details Modal -->
+    <div id="grant-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div id="modal-body">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 NVCA. Federal grant opportunities database.</p>
+            <p>Data sourced from Grants.gov | Last updated: <span id="last-updated">August 11, 2025</span></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+    <script src="auth.js"></script>
+</body>
+</html>
