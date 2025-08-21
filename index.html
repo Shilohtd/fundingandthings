@@ -56,6 +56,7 @@
                 <button class="tab-button active" data-tab="grants">Federal Grants</button>
                 <button class="tab-button" data-tab="challenges">Government Challenges</button>
                 <button class="tab-button" data-tab="sbir">SBIR/STTR Programs</button>
+                <button class="tab-button" data-tab="nofas">Federal NOFAs</button>
             </div>
         </div>
     </section>
@@ -598,6 +599,135 @@
         </div>
     </div>
 
+    <!-- Federal NOFAs Tab Content -->
+    <div id="nofas-tab" class="tab-content">
+        <!-- NOFAs Statistics -->
+        <section class="stats-section">
+            <div class="container">
+                <div class="stats-grid" id="nofas-stats-container">
+                    <div class="stat-card">
+                        <div class="stat-value" id="nofas-stat-total">0</div>
+                        <div class="stat-label">Total NOFAs</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="nofas-stat-recent">0</div>
+                        <div class="stat-label">Recent (30 days)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="nofas-stat-agencies">0</div>
+                        <div class="stat-label">Agencies</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="nofas-stat-funding">$0</div>
+                        <div class="stat-label">Total Funding</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOFAs Filters -->
+        <section class="filters-section">
+            <div class="container">
+                <div class="search-bar">
+                    <input type="text" id="nofas-search-input" placeholder="Search NOFAs by title, agency, or funding opportunity...">
+                    <button id="nofas-search-btn" class="btn btn-primary">Search</button>
+                </div>
+                
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="nofas-filter-agency">Agency</label>
+                        <select id="nofas-filter-agency">
+                            <option value="">All Agencies</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="nofas-filter-date">Publication Date</label>
+                        <select id="nofas-filter-date">
+                            <option value="">All Dates</option>
+                            <option value="week">Last 7 Days</option>
+                            <option value="month">Last 30 Days</option>
+                            <option value="quarter">Last 3 Months</option>
+                            <option value="year">Last Year</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="nofas-filter-funding">Funding Amount</label>
+                        <select id="nofas-filter-funding">
+                            <option value="">All Amounts</option>
+                            <option value="under-1m">Under $1M</option>
+                            <option value="1m-10m">$1M - $10M</option>
+                            <option value="10m-100m">$10M - $100M</option>
+                            <option value="over-100m">Over $100M</option>
+                            <option value="unspecified">Amount Not Specified</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="nofas-filter-deadline">Application Deadline</label>
+                        <select id="nofas-filter-deadline">
+                            <option value="">All Deadlines</option>
+                            <option value="open">Currently Open</option>
+                            <option value="week">Due in 7 Days</option>
+                            <option value="month">Due in 30 Days</option>
+                            <option value="quarter">Due in 3 Months</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="nofas-filter-significant">Significance</label>
+                        <select id="nofas-filter-significant">
+                            <option value="">All Documents</option>
+                            <option value="true">Significant (EO 12866)</option>
+                            <option value="false">Standard</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="nofas-filter-docket">Docket ID</label>
+                        <input type="text" id="nofas-filter-docket" placeholder="e.g., EPA-HQ-OPPT-2025-0001">
+                    </div>
+                </div>
+                
+                <div class="filter-actions">
+                    <button id="nofas-clear-filters" class="btn btn-outline">Clear Filters</button>
+                    <button id="nofas-export-results" class="btn btn-outline">Export Results</button>
+                    <span id="nofas-results-count">Showing 0 NOFAs</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOFAs Table -->
+        <section class="grants-section">
+            <div class="container">
+                <div class="table-wrapper">
+                    <table id="nofas-table">
+                        <thead>
+                            <tr>
+                                <th data-sort="title">NOFA Title</th>
+                                <th data-sort="agency">Agency</th>
+                                <th data-sort="publication_date">Published</th>
+                                <th data-sort="funding_amount">Funding Amount</th>
+                                <th data-sort="application_deadline">Deadline</th>
+                                <th data-sort="document_number">Document Number</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="nofas-tbody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination" id="nofas-pagination">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </div>
+
     <!-- Grant Details Modal -->
     <div id="grant-modal" class="modal">
         <div class="modal-content">
@@ -620,6 +750,7 @@
     <script src="app.js"></script>
     <script src="challenges.js"></script>
     <script src="sbir.js"></script>
+    <script src="nofas.js"></script>
     <script src="auth.js"></script>
 </body>
 </html>

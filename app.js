@@ -607,5 +607,7 @@ function switchTab(tabName) {
         window.challengeManager.updateStatistics();
     } else if (tabName === 'sbir' && window.sbirManager) {
         window.sbirManager.updateStatistics();
+    } else if (tabName === 'nofas' && window.nofasManager) {
+        window.nofasManager.updateStatistics();
     }
 }

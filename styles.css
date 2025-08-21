@@ -306,6 +306,45 @@ body {
     transition: all 0.2s ease;
 }
 
+/* Federal Register NOFAs specific styling */
+.badge {
+    display: inline-block;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.2rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    margin-left: 0.5rem;
+}
+
+.badge-significant {
+    background: var(--orange);
+    color: white;
+}
+
+.document-link {
+    color: var(--primary-teal);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.document-link:hover {
+    color: var(--navy-blue);
+    text-decoration: underline;
+}
+
+.deadline-info {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.grant-number {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-family: monospace;
+}
+
 /* Header */
 .header {
     background: var(--navy-blue);
