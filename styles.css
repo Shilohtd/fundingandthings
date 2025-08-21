@@ -49,6 +49,25 @@ body {
     padding: 0 20px;
 }
 
+/* Header actions styling */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-actions #user-info {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    background: var(--tint-teal);
+    border-radius: 4px;
+    border: 1px solid var(--primary-teal);
+}
+
+.header-actions button {
+    white-space: nowrap;
+}
+
 /* Header */
 .header {
     background: var(--navy-blue);

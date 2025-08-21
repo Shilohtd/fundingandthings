@@ -33,17 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Setup auth button
+// Setup auth buttons
 const authBtn = document.getElementById('auth-btn');
+const logoutBtn = document.getElementById('logout-btn');
+
 if (authBtn) {
     authBtn.addEventListener('click', () => {
-        const user = window.netlifyIdentity && window.netlifyIdentity.currentUser();
-        if (user) {
-            if (confirm('Are you sure you want to logout?')) {
-                window.netlifyIdentity.logout();
-            }
-        } else {
-            window.netlifyIdentity.open();
+        window.netlifyIdentity.open();
+    });
+}
+
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to logout?')) {
+            window.netlifyIdentity.logout();
         }
     });
 }
@@ -51,16 +54,20 @@ if (authBtn) {
 // Handle authentication state changes
 function handleAuthChange(user) {
     const authBtn = document.getElementById('auth-btn');
+    const logoutBtn = document.getElementById('logout-btn');
     const userInfo = document.getElementById('user-info');
     
     if (user) {
         // User is logged in
         showProtectedContent();
         
+        // Hide login button, show logout button
         if (authBtn) {
-            authBtn.textContent = 'Logout';
-            authBtn.classList.remove('btn-secondary');
-            authBtn.classList.add('btn-outline');
+            authBtn.style.display = 'none';
+        }
+        
+        if (logoutBtn) {
+            logoutBtn.style.display = 'inline-block';
         }
         
         if (userInfo) {
@@ -77,10 +84,13 @@ function handleAuthChange(user) {
         hideProtectedContent();
         showLoginRequired();
         
+        // Show login button, hide logout button
         if (authBtn) {
-            authBtn.textContent = 'Login';
-            authBtn.classList.add('btn-secondary');
-            authBtn.classList.remove('btn-outline');
+            authBtn.style.display = 'inline-block';
+        }
+        
+        if (logoutBtn) {
+            logoutBtn.style.display = 'none';
         }
         
         if (userInfo) {
