@@ -75,6 +75,14 @@ function setupEventListeners() {
     document.getElementById('grant-modal').addEventListener('click', (e) => {
         if (e.target === e.currentTarget) closeModal();
     });
+    
+    // Tab navigation
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const tabName = e.target.dataset.tab;
+            switchTab(tabName);
+        });
+    });
 }
 
 // Populate filter dropdowns
@@ -561,5 +569,30 @@ function updateLastUpdated() {
             day: 'numeric'
         };
         lastUpdatedElement.textContent = now.toLocaleDateString('en-US', options);
+    }
+}
+
+// Tab switching functionality
+function switchTab(tabName) {
+    // Update active tab button
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+    
+    // Show corresponding tab content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    document.getElementById(`${tabName}-tab`).classList.add('active');
+    
+    // Update statistics section based on current tab
+    const statsSection = document.querySelector('.stats-section');
+    if (tabName === 'grants') {
+        updateStatistics();
+    } else if (tabName === 'challenges' && window.challengeManager) {
+        window.challengeManager.updateStatistics();
+    } else if (tabName === 'sbir' && window.sbirManager) {
+        window.sbirManager.updateStatistics();
     }
 }

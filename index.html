@@ -55,6 +55,7 @@
             <div class="tabs">
                 <button class="tab-button active" data-tab="grants">Federal Grants</button>
                 <button class="tab-button" data-tab="challenges">Government Challenges</button>
+                <button class="tab-button" data-tab="sbir">SBIR/STTR Programs</button>
             </div>
         </div>
     </section>
@@ -295,6 +296,308 @@
         </section>
     </div>
 
+    <!-- SBIR/STTR Tab Content -->
+    <div id="sbir-tab" class="tab-content">
+        <!-- SBIR Statistics -->
+        <section class="stats-section">
+            <div class="container">
+                <div class="stats-grid" id="sbir-stats-container">
+                    <div class="stat-card">
+                        <div class="stat-value" id="sbir-stat-awards">0</div>
+                        <div class="stat-label">SBIR Awards</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="sbir-stat-companies">0</div>
+                        <div class="stat-label">Companies</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="sbir-stat-solicitations">0</div>
+                        <div class="stat-label">Open Solicitations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="sbir-stat-funding">$0</div>
+                        <div class="stat-label">Total Funding</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SBIR Sub-Navigation -->
+        <section class="sub-tab-navigation">
+            <div class="container">
+                <div class="sub-tabs">
+                    <button class="sub-tab-button active" data-subtab="awards">Awards</button>
+                    <button class="sub-tab-button" data-subtab="companies">Companies</button>
+                    <button class="sub-tab-button" data-subtab="solicitations">Solicitations</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Awards Sub-Tab -->
+        <div id="awards-subtab" class="sub-tab-content active">
+            <!-- Awards Filters -->
+            <section class="filters-section">
+                <div class="container">
+                    <div class="search-bar">
+                        <input type="text" id="sbir-awards-search-input" placeholder="Search awards by title, company, or project...">
+                        <button id="sbir-awards-search-btn" class="btn btn-primary">Search</button>
+                    </div>
+                    
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="sbir-awards-filter-agency">Agency</label>
+                            <select id="sbir-awards-filter-agency">
+                                <option value="">All Agencies</option>
+                                <option value="DOD">Department of Defense</option>
+                                <option value="NIH">National Institutes of Health</option>
+                                <option value="NSF">National Science Foundation</option>
+                                <option value="DOE">Department of Energy</option>
+                                <option value="NASA">NASA</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="sbir-awards-filter-phase">Phase</label>
+                            <select id="sbir-awards-filter-phase">
+                                <option value="">All Phases</option>
+                                <option value="Phase I">Phase I</option>
+                                <option value="Phase II">Phase II</option>
+                                <option value="Phase III">Phase III</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="sbir-awards-filter-year">Award Year</label>
+                            <select id="sbir-awards-filter-year">
+                                <option value="">All Years</option>
+                                <option value="2025">2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="sbir-awards-filter-state">State</label>
+                            <select id="sbir-awards-filter-state">
+                                <option value="">All States</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button id="sbir-awards-clear-filters" class="btn btn-outline">Clear Filters</button>
+                        <button id="sbir-awards-export-results" class="btn btn-outline">Export Results</button>
+                        <span id="sbir-awards-results-count">Showing 0 awards</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Awards Table -->
+            <section class="grants-section">
+                <div class="container">
+                    <div class="table-wrapper">
+                        <table id="sbir-awards-table">
+                            <thead>
+                                <tr>
+                                    <th data-sort="award_title">Project Title</th>
+                                    <th data-sort="firm">Company</th>
+                                    <th data-sort="agency">Agency</th>
+                                    <th data-sort="phase">Phase</th>
+                                    <th data-sort="award_amount">Award Amount</th>
+                                    <th data-sort="award_year">Year</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sbir-awards-tbody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination" id="sbir-awards-pagination">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Companies Sub-Tab -->
+        <div id="companies-subtab" class="sub-tab-content">
+            <!-- Companies Filters -->
+            <section class="filters-section">
+                <div class="container">
+                    <div class="search-bar">
+                        <input type="text" id="sbir-companies-search-input" placeholder="Search companies by name, location, or technology...">
+                        <button id="sbir-companies-search-btn" class="btn btn-primary">Search</button>
+                    </div>
+                    
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="sbir-companies-filter-state">State</label>
+                            <select id="sbir-companies-filter-state">
+                                <option value="">All States</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="sbir-companies-filter-funding">Funding Range</label>
+                            <select id="sbir-companies-filter-funding">
+                                <option value="">All Ranges</option>
+                                <option value="under-500k">Under $500K</option>
+                                <option value="500k-1m">$500K - $1M</option>
+                                <option value="1m-5m">$1M - $5M</option>
+                                <option value="5m-10m">$5M - $10M</option>
+                                <option value="over-10m">Over $10M</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="sbir-companies-filter-awards">Number of Awards</label>
+                            <select id="sbir-companies-filter-awards">
+                                <option value="">Any Number</option>
+                                <option value="1">1 Award</option>
+                                <option value="2-5">2-5 Awards</option>
+                                <option value="6-10">6-10 Awards</option>
+                                <option value="over-10">10+ Awards</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="sbir-companies-filter-employees">Company Size</label>
+                            <select id="sbir-companies-filter-employees">
+                                <option value="">Any Size</option>
+                                <option value="under-10">Under 10 employees</option>
+                                <option value="10-50">10-50 employees</option>
+                                <option value="50-100">50-100 employees</option>
+                                <option value="over-100">100+ employees</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button id="sbir-companies-clear-filters" class="btn btn-outline">Clear Filters</button>
+                        <button id="sbir-companies-export-results" class="btn btn-outline">Export Results</button>
+                        <span id="sbir-companies-results-count">Showing 0 companies</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Companies Table -->
+            <section class="grants-section">
+                <div class="container">
+                    <div class="table-wrapper">
+                        <table id="sbir-companies-table">
+                            <thead>
+                                <tr>
+                                    <th data-sort="firm_name">Company Name</th>
+                                    <th data-sort="location">Location</th>
+                                    <th data-sort="total_awards">Awards</th>
+                                    <th data-sort="total_funding">Total Funding</th>
+                                    <th data-sort="latest_award_year">Latest Award</th>
+                                    <th data-sort="employees">Employees</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sbir-companies-tbody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination" id="sbir-companies-pagination">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Solicitations Sub-Tab -->
+        <div id="solicitations-subtab" class="sub-tab-content">
+            <!-- Solicitations Filters -->
+            <section class="filters-section">
+                <div class="container">
+                    <div class="search-bar">
+                        <input type="text" id="sbir-solicitations-search-input" placeholder="Search solicitations by title, topic, or description...">
+                        <button id="sbir-solicitations-search-btn" class="btn btn-primary">Search</button>
+                    </div>
+                    
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="sbir-solicitations-filter-agency">Agency</label>
+                            <select id="sbir-solicitations-filter-agency">
+                                <option value="">All Agencies</option>
+                                <option value="DOD">Department of Defense</option>
+                                <option value="NIH">National Institutes of Health</option>
+                                <option value="NSF">National Science Foundation</option>
+                                <option value="DOE">Department of Energy</option>
+                                <option value="NASA">NASA</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="sbir-solicitations-filter-status">Status</label>
+                            <select id="sbir-solicitations-filter-status">
+                                <option value="">All Statuses</option>
+                                <option value="Open">Open</option>
+                                <option value="Closed">Closed</option>
+                                <option value="Upcoming">Upcoming</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="sbir-solicitations-filter-phases">Phases Offered</label>
+                            <select id="sbir-solicitations-filter-phases">
+                                <option value="">All Phases</option>
+                                <option value="Phase I">Phase I Only</option>
+                                <option value="Phase II">Phase II Only</option>
+                                <option value="Phase I, Phase II">Phase I & II</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-actions">
+                        <button id="sbir-solicitations-clear-filters" class="btn btn-outline">Clear Filters</button>
+                        <button id="sbir-solicitations-export-results" class="btn btn-outline">Export Results</button>
+                        <span id="sbir-solicitations-results-count">Showing 0 solicitations</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Solicitations Table -->
+            <section class="grants-section">
+                <div class="container">
+                    <div class="table-wrapper">
+                        <table id="sbir-solicitations-table">
+                            <thead>
+                                <tr>
+                                    <th data-sort="title">Solicitation Title</th>
+                                    <th data-sort="agency">Agency</th>
+                                    <th data-sort="phases_offered">Phases</th>
+                                    <th data-sort="status">Status</th>
+                                    <th data-sort="open_date">Open Date</th>
+                                    <th data-sort="close_date">Close Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sbir-solicitations-tbody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination" id="sbir-solicitations-pagination">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
     <!-- Grant Details Modal -->
     <div id="grant-modal" class="modal">
         <div class="modal-content">
@@ -316,6 +619,7 @@
     <!-- Scripts -->
     <script src="app.js"></script>
     <script src="challenges.js"></script>
+    <script src="sbir.js"></script>
     <script src="auth.js"></script>
 </body>
 </html>
