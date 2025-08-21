@@ -101,14 +101,33 @@ function handleAuthChange(user) {
 
 // Hide protected content
 function hideProtectedContent() {
-    // Hide all main sections
-    const sections = ['.stats-section', '.filters-section', '.grants-section'];
-    sections.forEach(selector => {
-        const element = document.querySelector(selector);
-        if (element) {
-            element.style.display = 'none';
-        }
+    // Hide all tab content - everything requires login by default
+    // This will work for any new tabs added in the future
+    const allTabContents = document.querySelectorAll('.tab-content');
+    allTabContents.forEach(tab => {
+        tab.style.display = 'none';
     });
+    
+    // Disable all tab buttons - this will work for any new tabs
+    const allTabButtons = document.querySelectorAll('.tab-button');
+    allTabButtons.forEach(button => {
+        button.disabled = true;
+        button.style.opacity = '0.5';
+        button.style.cursor = 'not-allowed';
+        button.title = 'Login required to access this section';
+    });
+    
+    // Hide the tab navigation section entirely when not logged in
+    const tabNavigation = document.querySelector('.tab-navigation');
+    if (tabNavigation) {
+        tabNavigation.style.display = 'none';
+    }
+    
+    // Hide the statistics section
+    const statsSection = document.querySelector('.stats-section');
+    if (statsSection) {
+        statsSection.style.display = 'none';
+    }
     
     // Remove any existing login screen
     const existingLoginScreen = document.getElementById('login-screen');
@@ -119,14 +138,45 @@ function hideProtectedContent() {
 
 // Show protected content
 function showProtectedContent() {
-    // Show all main sections
-    const sections = ['.stats-section', '.filters-section', '.grants-section'];
-    sections.forEach(selector => {
-        const element = document.querySelector(selector);
-        if (element) {
-            element.style.display = '';
-        }
+    // Show all tab content - this will work for any new tabs added in the future
+    const allTabContents = document.querySelectorAll('.tab-content');
+    allTabContents.forEach(tab => {
+        tab.style.display = '';
     });
+    
+    // Enable all tab buttons - this will work for any new tabs
+    const allTabButtons = document.querySelectorAll('.tab-button');
+    allTabButtons.forEach(button => {
+        button.disabled = false;
+        button.style.opacity = '1';
+        button.style.cursor = 'pointer';
+        button.title = '';
+    });
+    
+    // Show the tab navigation section
+    const tabNavigation = document.querySelector('.tab-navigation');
+    if (tabNavigation) {
+        tabNavigation.style.display = '';
+    }
+    
+    // Show the statistics section
+    const statsSection = document.querySelector('.stats-section');
+    if (statsSection) {
+        statsSection.style.display = '';
+    }
+    
+    // Switch to grants tab by default when logging in
+    const grantsTab = document.getElementById('grants-tab');
+    const grantsButton = document.querySelector('[data-tab="grants"]');
+    if (grantsTab && grantsButton) {
+        // Hide other tabs
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+        
+        // Show grants tab
+        grantsTab.classList.add('active');
+        grantsButton.classList.add('active');
+    }
     
     // Remove login screen
     const loginScreen = document.getElementById('login-screen');
@@ -163,8 +213,8 @@ function showLoginRequired() {
                     🔒 Authentication Required
                 </h2>
                 <p style="color: #595959; margin-bottom: 2rem; font-size: 1.1rem; line-height: 1.6;">
-                    Welcome to the NVCA Federal Grants Database. This resource is exclusively available to authorized users.
-                    Please login to access the grants database.
+                    Welcome to the NVCA Federal Funding Database. This comprehensive resource is exclusively available 
+                    to authorized NVCA members and partners. Please login to access the complete funding database.
                 </p>
                 <button onclick="window.netlifyIdentity.open()" 
                         style="background: #5CB5B5; color: white; border: none; padding: 1rem 2rem; 
@@ -178,14 +228,20 @@ function showLoginRequired() {
             </div>
             
             <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px;">
-                <h3 style="color: #374C6C; margin-bottom: 1rem;">What's Inside?</h3>
+                <h3 style="color: #374C6C; margin-bottom: 1rem;">Complete Federal Funding Platform</h3>
                 <ul style="text-align: left; color: #595959; line-height: 1.8;">
-                    <li>Over 1,000 federal grant opportunities</li>
-                    <li>Advanced search and filtering capabilities</li>
-                    <li>Real-time funding statistics</li>
+                    <li><strong>Federal Grants:</strong> 1,000+ grant opportunities from Grants.gov</li>
+                    <li><strong>Government Challenges:</strong> Innovation competitions and prize challenges</li>
+                    <li><strong>SBIR/STTR Programs:</strong> Small business innovation research awards, companies, and solicitations</li>
+                    <li>Advanced search and filtering capabilities across all funding types</li>
+                    <li>Real-time funding statistics and analytics dashboard</li>
+                    <li>Cross-linking between related opportunities and organizations</li>
                     <li>Export functionality for qualified users</li>
-                    <li>Daily updates from Grants.gov</li>
+                    <li>Daily automated updates from federal sources</li>
                 </ul>
+                <p style="margin-top: 1rem; color: #374C6C; font-weight: 500;">
+                    🔐 All content requires authentication to ensure data security and access control.
+                </p>
             </div>
         </div>
     `;

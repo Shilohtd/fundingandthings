@@ -574,6 +574,19 @@ function updateLastUpdated() {
 
 // Tab switching functionality
 function switchTab(tabName) {
+    // Check if user is authenticated - ALL tabs require login by default
+    const isAuthenticated = window.netlifyIdentity && window.netlifyIdentity.currentUser();
+    
+    // Define any tabs that DON'T require authentication (currently none)
+    const publicTabs = []; // Empty array - all tabs require login
+    
+    if (!publicTabs.includes(tabName) && !isAuthenticated) {
+        // All tabs require login unless explicitly in publicTabs array
+        alert('Please login to access this section.');
+        window.netlifyIdentity.open();
+        return;
+    }
+    
     // Update active tab button
     document.querySelectorAll('.tab-button').forEach(button => {
         button.classList.remove('active');
