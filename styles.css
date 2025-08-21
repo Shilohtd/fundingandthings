@@ -68,6 +68,78 @@ body {
     white-space: nowrap;
 }
 
+/* Tab Navigation */
+.tab-navigation {
+    background: var(--bg-secondary);
+    border-bottom: 2px solid var(--border-color);
+    padding: 0;
+}
+
+.tabs {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.tab-button:hover {
+    color: var(--primary-teal);
+    background: rgba(92, 181, 181, 0.1);
+}
+
+.tab-button.active {
+    color: var(--primary-teal);
+    border-bottom-color: var(--primary-teal);
+    background: white;
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary-teal);
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Challenge-specific status styling */
+.status-active {
+    color: var(--success);
+    font-weight: bold;
+}
+
+.status-archived {
+    color: var(--medium-gray);
+}
+
+.status-upcoming {
+    color: var(--secondary-blue);
+    font-weight: bold;
+}
+
 /* Header */
 .header {
     background: var(--navy-blue);

@@ -49,9 +49,21 @@
         </div>
     </section>
 
-    <!-- Search and Filters -->
-    <section class="filters-section">
+    <!-- Tab Navigation -->
+    <section class="tab-navigation">
         <div class="container">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="grants">Federal Grants</button>
+                <button class="tab-button" data-tab="challenges">Government Challenges</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Grants Tab Content -->
+    <div id="grants-tab" class="tab-content active">
+        <!-- Search and Filters -->
+        <section class="filters-section">
+            <div class="container">
             <div class="search-bar">
                 <input type="text" id="search-input" placeholder="Search grants by title, agency, description, or opportunity number...">
                 <button id="search-btn" class="btn btn-primary">Search</button>
@@ -167,6 +179,121 @@
             </div>
         </div>
     </section>
+    </div>
+
+    <!-- Challenges Tab Content -->
+    <div id="challenges-tab" class="tab-content">
+        <!-- Challenge Statistics -->
+        <section class="stats-section">
+            <div class="container">
+                <div class="stats-grid" id="challenge-stats-container">
+                    <div class="stat-card">
+                        <div class="stat-value" id="challenge-stat-total">0</div>
+                        <div class="stat-label">Total Challenges</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="challenge-stat-active">0</div>
+                        <div class="stat-label">Active Now</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="challenge-stat-agencies">0</div>
+                        <div class="stat-label">Agencies</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="challenge-stat-prizes">$0</div>
+                        <div class="stat-label">Total Prize Money</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Challenge Filters -->
+        <section class="filters-section">
+            <div class="container">
+                <div class="search-bar">
+                    <input type="text" id="challenge-search-input" placeholder="Search challenges by title, agency, or description...">
+                    <button id="challenge-search-btn" class="btn btn-primary">Search</button>
+                </div>
+                
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label for="challenge-filter-agency">Agency</label>
+                        <select id="challenge-filter-agency">
+                            <option value="">All Agencies</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="challenge-filter-status">Status</label>
+                        <select id="challenge-filter-status">
+                            <option value="">All Statuses</option>
+                            <option value="Active">Active</option>
+                            <option value="Archived">Archived</option>
+                            <option value="Upcoming">Upcoming</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="challenge-filter-type">Challenge Type</label>
+                        <select id="challenge-filter-type">
+                            <option value="">All Types</option>
+                            <option value="Innovation">Innovation</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Design">Design</option>
+                            <option value="Research">Research</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="challenge-filter-prize">Prize Range</label>
+                        <select id="challenge-filter-prize">
+                            <option value="">All Ranges</option>
+                            <option value="under-10k">Under $10K</option>
+                            <option value="10k-50k">$10K - $50K</option>
+                            <option value="50k-100k">$50K - $100K</option>
+                            <option value="100k-500k">$100K - $500K</option>
+                            <option value="over-500k">Over $500K</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-actions">
+                    <button id="challenge-clear-filters" class="btn btn-outline">Clear All Filters</button>
+                    <button id="challenge-export-results" class="btn btn-outline">Export Results</button>
+                    <span id="challenge-results-count">Showing 0 challenges</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Challenges Table -->
+        <section class="grants-section">
+            <div class="container">
+                <div class="table-wrapper">
+                    <table id="challenges-table">
+                        <thead>
+                            <tr>
+                                <th data-sort="title">Challenge Title</th>
+                                <th data-sort="agency">Agency</th>
+                                <th data-sort="challenge_type">Type</th>
+                                <th data-sort="status">Status</th>
+                                <th data-sort="prize_total">Prize Amount</th>
+                                <th data-sort="submission_deadline">Deadline</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="challenges-tbody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination" id="challenge-pagination">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </div>
 
     <!-- Grant Details Modal -->
     <div id="grant-modal" class="modal">
@@ -188,6 +315,7 @@
 
     <!-- Scripts -->
     <script src="app.js"></script>
+    <script src="challenges.js"></script>
     <script src="auth.js"></script>
 </body>
 </html>
