@@ -85,11 +85,22 @@ function setupChallengeEventListeners() {
 // Load challenges data
 async function loadChallengesData() {
     try {
-        // For now, use sample data since we're not running the pipeline yet
-        challengesData = getSampleChallenges();
-        filteredChallenges = [...challengesData];
+        // Try to load live data first, fall back to sample data
+        try {
+            const response = await fetch('challenges_data.json');
+            if (response.ok) {
+                challengesData = await response.json();
+                console.log(`Loaded ${challengesData.length} live challenges`);
+            } else {
+                throw new Error('Live data not available');
+            }
+        } catch (liveDataError) {
+            console.log('Live challenge data not available, using sample data');
+            challengesData = getSampleChallenges();
+            console.log(`Loaded ${challengesData.length} sample challenges`);
+        }
         
-        console.log(`Loaded ${challengesData.length} challenges`);
+        filteredChallenges = [...challengesData];
         
         updateChallengeStatistics();
         populateChallengeFilters();
