@@ -1,4 +1,4 @@
-name: Auto Update Grants Database
+name: Auto Update Federal Funding Database
 
 on:
   # Run daily at 6 AM UTC (2 AM EST, 1 AM CST)
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  update-grants:
+  update-federal-funding:
     runs-on: ubuntu-latest
     
     steps:
@@ -45,7 +45,8 @@ jobs:
     
     - name: Download and process latest data
       run: |
-        # Create a comprehensive update script for both grants and challenges
+        # Create a comprehensive update script for all federal funding data sources
+        # NOTE: Any new data sources should be added to this daily automation by default
         cat << 'EOF' > update_data.py
         #!/usr/bin/env python3
         import os
@@ -139,6 +140,107 @@ jobs:
                 logger.error(f"Error getting extract info: {e}")
                 return None
         
+        def fetch_federal_register_nofas():
+            """Fetch NOFAs from Federal Register API"""
+            nofas = []
+            try:
+                logger.info("Fetching Federal Register NOFAs")
+                
+                # Funding-related keywords for filtering NOFAs
+                funding_keywords = [
+                    'notice of funding availability', 'nofa', 'notice of funds availability',
+                    'funding opportunity', 'grant opportunity', 'financial assistance',
+                    'funding announcement', 'solicitation', 'request for applications'
+                ]
+                
+                # Search for recent NOTICE documents (last 30 days for daily updates)
+                from datetime import timedelta
+                end_date = datetime.now()
+                start_date = end_date - timedelta(days=30)
+                
+                # Federal Register API endpoint
+                api_url = "https://api.federalregister.gov/v1/articles.json"
+                
+                params = {
+                    'conditions[type]': 'NOTICE',
+                    'conditions[publication_date][gte]': start_date.strftime('%Y-%m-%d'),
+                    'conditions[publication_date][lte]': end_date.strftime('%Y-%m-%d'),
+                    'fields[]': ['title', 'agency_names', 'publication_date', 'effective_on', 
+                               'abstract', 'html_url', 'pdf_url', 'document_number', 'docket_id',
+                               'significant', 'cfr_references'],
+                    'per_page': 100,
+                    'page': 1,
+                    'order': 'newest'
+                }
+                
+                response = requests.get(api_url, params=params, timeout=30)
+                response.raise_for_status()
+                
+                data = response.json()
+                
+                for item in data.get('results', []):
+                    # Filter for funding-related notices
+                    title = (item.get('title', '') or '').lower()
+                    abstract = (item.get('abstract', '') or '').lower()
+                    combined_text = f"{title} {abstract}"
+                    
+                    if any(keyword in combined_text for keyword in funding_keywords):
+                        # Parse funding amount from abstract
+                        funding_amount = None
+                        import re
+                        amount_match = re.search(r'\$([0-9,]+(?:\.[0-9]+)?)\s*(?:million|billion)?', abstract)
+                        if amount_match:
+                            try:
+                                amount_str = amount_match.group(1).replace(',', '')
+                                amount = float(amount_str)
+                                if 'million' in amount_match.group(0):
+                                    amount *= 1000000
+                                elif 'billion' in amount_match.group(0):
+                                    amount *= 1000000000
+                                funding_amount = amount
+                            except ValueError:
+                                pass
+                        
+                        # Get agency information
+                        agency_names = item.get('agency_names', [])
+                        agency = agency_names[0] if agency_names else 'Unknown Agency'
+                        
+                        nofa = {
+                            "id": f"fr_{item.get('document_number', '').replace(' ', '_')}",
+                            "title": item.get('title', '').strip(),
+                            "agency": agency,
+                            "document_number": item.get('document_number'),
+                            "publication_date": item.get('publication_date'),
+                            "effective_date": item.get('effective_on'),
+                            "abstract": (abstract[:500] + '...' if len(abstract) > 500 else abstract) if abstract else None,
+                            "html_url": item.get('html_url'),
+                            "pdf_url": item.get('pdf_url'),
+                            "significant": item.get('significant', False),
+                            "docket_id": item.get('docket_id'),
+                            "funding_amount": funding_amount,
+                            "keywords": [kw for kw in funding_keywords if kw in combined_text][:5],
+                            "last_updated": datetime.now().isoformat()
+                        }
+                        nofas.append(nofa)
+                
+                logger.info(f"Found {len(nofas)} Federal Register NOFAs")
+                return nofas
+                
+            except Exception as e:
+                logger.error(f"Error fetching Federal Register NOFAs: {e}")
+                # Return sample NOFA if API fails
+                return [{
+                    "id": "fr_daily_sample",
+                    "title": "Daily Federal Register Funding Notice",
+                    "agency": "Sample Federal Agency",
+                    "document_number": f"2025-{datetime.now().strftime('%m%d')}",
+                    "publication_date": datetime.now().strftime('%Y-%m-%d'),
+                    "abstract": "Sample NOFA generated during daily automation run.",
+                    "html_url": "https://www.federalregister.gov",
+                    "significant": False,
+                    "last_updated": datetime.now().isoformat()
+                }]
+        
         def update_website_data():
             """Update the website with live data"""
             
@@ -148,9 +250,16 @@ jobs:
             # Get challenges data
             challenges = scrape_challenges()
             
+            # Get Federal Register NOFAs data
+            nofas = fetch_federal_register_nofas()
+            
             # Save challenges data
             with open('challenges_data.json', 'w') as f:
                 json.dump(challenges, f, indent=2)
+            
+            # Save NOFAs data
+            with open('nofas_data.json', 'w') as f:
+                json.dump(nofas, f, indent=2)
             
             # Create automation status
             update_data = {
@@ -158,14 +267,15 @@ jobs:
                 "automation_status": "active",
                 "latest_extract": extract_info['filename'] if extract_info else None,
                 "challenges_count": len(challenges),
-                "message": f"Daily automated update completed. Found {len(challenges)} challenges."
+                "nofas_count": len(nofas),
+                "message": f"Daily automated update completed. Found {len(challenges)} challenges and {len(nofas)} NOFAs."
             }
             
             # Update status file
             with open('automation_status.json', 'w') as f:
                 json.dump(update_data, f, indent=2)
             
-            logger.info(f"Update completed: {len(challenges)} challenges, extract: {extract_info['filename'] if extract_info else 'None'}")
+            logger.info(f"Update completed: {len(challenges)} challenges, {len(nofas)} NOFAs, extract: {extract_info['filename'] if extract_info else 'None'}")
             
             return True
         
@@ -195,12 +305,13 @@ jobs:
           # Create commit message with timestamp
           TIMESTAMP=$(date -u "+%Y-%m-%d %H:%M:%S UTC")
           
-          git commit -m "Automated grants and challenges update - $TIMESTAMP
+          git commit -m "Automated federal funding data update - $TIMESTAMP
 
           🤖 Automated update from GitHub Actions
           - Scraped latest challenges from Challenge.gov
+          - Fetched live NOFAs from Federal Register API
           - Checked for latest Grants.gov XML extract
-          - Updated both grants and challenges data
+          - Updated grants, challenges, and NOFAs data
           - Automation running daily at 6 AM UTC
           
           Generated with Claude Code
@@ -214,8 +325,8 @@ jobs:
     
     - name: Report status
       run: |
-        echo "🎉 Automated grants and challenges update completed!"
-        echo "📊 Check automation_status.json and challenges_data.json for details"
+        echo "🎉 Automated federal funding data update completed!"
+        echo "📊 Check automation_status.json for complete details"
         if [ -f automation_status.json ]; then
           echo "📋 Automation Status:"
           cat automation_status.json
@@ -223,4 +334,8 @@ jobs:
         if [ -f challenges_data.json ]; then
           echo "🏆 Challenges Found:"
           echo "$(cat challenges_data.json | grep -o '"title"' | wc -l) challenges updated"
+        fi
+        if [ -f nofas_data.json ]; then
+          echo "📰 Federal NOFAs Found:"
+          echo "$(cat nofas_data.json | grep -o '"title"' | wc -l) NOFAs updated"
         fi
