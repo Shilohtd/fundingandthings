@@ -1,0 +1,155 @@
+name: Auto Update Grants Database
+
+on:
+  # Run daily at 6 AM UTC (2 AM EST, 1 AM CST)
+  schedule:
+    - cron: '0 6 * * *'
+  
+  # Allow manual triggering from GitHub interface
+  workflow_dispatch:
+
+jobs:
+  update-grants:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        # Need full history for git operations
+        fetch-depth: 0
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+    
+    - name: Install dependencies
+      run: |
+        pip install --upgrade pip
+        pip install requests beautifulsoup4 lxml pyyaml
+    
+    - name: Create grants pipeline structure
+      run: |
+        # Create necessary directories and files for the pipeline
+        mkdir -p grants_pipeline/{core,sources,outputs,config}
+        
+        # Create __init__.py files
+        touch grants_pipeline/__init__.py
+        touch grants_pipeline/core/__init__.py
+        touch grants_pipeline/sources/__init__.py
+        touch grants_pipeline/outputs/__init__.py
+        touch grants_pipeline/config/__init__.py
+    
+    - name: Download and process latest grants data
+      run: |
+        # Create a simplified update script that works in GitHub Actions
+        cat << 'EOF' > update_grants.py
+        #!/usr/bin/env python3
+        import os
+        import sys
+        import json
+        import logging
+        import requests
+        from datetime import datetime
+        from bs4 import BeautifulSoup
+        
+        # Configure logging
+        logging.basicConfig(level=logging.INFO)
+        logger = logging.getLogger(__name__)
+        
+        def get_latest_extract_info():
+            """Get info about the latest XML extract"""
+            try:
+                response = requests.get("https://grants.gov/xml-extract", timeout=30)
+                response.raise_for_status()
+                
+                soup = BeautifulSoup(response.content, 'html.parser')
+                
+                # Look for ZIP file links
+                for link in soup.find_all('a', href=True):
+                    href = link['href']
+                    if 'GrantsDBExtract' in href and href.endswith('.zip'):
+                        filename = href.split('/')[-1]
+                        return {'filename': filename, 'url': href}
+                
+                return None
+            except Exception as e:
+                logger.error(f"Error getting extract info: {e}")
+                return None
+        
+        def update_website_data():
+            """Update the website with a placeholder indicating automation is working"""
+            
+            # Get latest extract info
+            extract_info = get_latest_extract_info()
+            
+            # Create basic update to show the automation is working
+            update_data = {
+                "last_updated": datetime.now().isoformat(),
+                "automation_status": "active",
+                "latest_extract": extract_info['filename'] if extract_info else None,
+                "message": "Automated update system is running. Full XML processing coming soon.",
+                "grants_count": "TBD - XML processing in development"
+            }
+            
+            # Update a status file to show the automation works
+            with open('automation_status.json', 'w') as f:
+                json.dump(update_data, f, indent=2)
+            
+            logger.info(f"Automation status updated: {extract_info['filename'] if extract_info else 'No extract found'}")
+            
+            return True
+        
+        if __name__ == '__main__':
+            logger.info("Starting automated grants update")
+            success = update_website_data()
+            if success:
+                logger.info("Update completed successfully")
+            else:
+                logger.error("Update failed")
+                sys.exit(1)
+        EOF
+        
+        python update_grants.py
+    
+    - name: Configure git
+      run: |
+        git config --global user.name "Grants Auto-Updater"
+        git config --global user.email "action@github.com"
+    
+    - name: Commit and push changes
+      run: |
+        # Check if there are any changes
+        if [[ -n $(git status --porcelain) ]]; then
+          git add .
+          
+          # Create commit message with timestamp
+          TIMESTAMP=$(date -u "+%Y-%m-%d %H:%M:%S UTC")
+          
+          git commit -m "Automated grants database update - $TIMESTAMP
+
+          🤖 Automated update from GitHub Actions
+          - Checked for latest Grants.gov XML extract
+          - Updated automation status
+          - Next: Full XML processing implementation
+          
+          Generated with Claude Code
+          Co-Authored-By: Claude <noreply@anthropic.com>"
+          
+          git push
+          echo "✅ Changes committed and pushed"
+        else
+          echo "ℹ️  No changes to commit"
+        fi
+    
+    - name: Report status
+      run: |
+        echo "🎉 Automated update completed successfully!"
+        echo "📊 Check automation_status.json for details"
+        if [ -f automation_status.json ]; then
+          echo "📋 Automation Status:"
+          cat automation_status.json
+        fi

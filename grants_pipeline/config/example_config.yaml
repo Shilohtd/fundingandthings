@@ -1,0 +1,55 @@
+# Example configuration for NVCA Grants Pipeline
+# Author: Shiloh TD
+
+# Pipeline configuration
+pipeline:
+  max_records_per_source: 10000    # Maximum records to process per source
+  future_only: true                # Only include grants with future close dates
+  enable_deduplication: true       # Remove duplicate grants
+  default_sort: "close_date"       # Default sorting: close_date, posted_date, title, agency
+
+# Processing configuration
+processing:
+  chunk_size: 1000                 # Number of records to process at once
+  max_workers: 4                   # Maximum parallel workers
+  timeout_seconds: 300             # Timeout for each source
+
+# Output configuration
+output:
+  formats:                         # Export formats to generate
+    - json
+    - csv
+  output_dir: "./output"           # Directory for output files
+  web_output_dir: "./web"          # Directory for web-ready files
+
+# Logging configuration
+logging:
+  level: "INFO"                    # DEBUG, INFO, WARNING, ERROR
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null                       # Log file path (null for console only)
+
+# Data source configurations
+sources:
+  # Grants.gov CSV source
+  - name: "grants.gov"
+    enabled: true
+    update_frequency: "daily"
+    config:
+      file_path: "./data/grants_database_20250811_035951_10000_records.csv"
+  
+  # Grants.gov XML source (disabled by default)
+  - name: "grants.gov.xml"
+    enabled: false
+    update_frequency: "weekly"
+    config:
+      file_path: "./data/GrantsDBExtract.xml"
+  
+  # Example API source template
+  - name: "example.api"
+    enabled: false
+    update_frequency: "daily"
+    config:
+      base_url: "https://api.example.gov/grants"
+      api_key: "${EXAMPLE_API_KEY}"  # Use environment variable
+      requires_auth: true
+      rate_limit: 10                 # requests per second
