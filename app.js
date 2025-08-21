@@ -23,6 +23,7 @@ async function loadGrantsData() {
         filteredGrants = [...grantsData];
         console.log(`Loaded ${grantsData.length} grants`);
         updateResultsCount();
+        updateLastUpdated();
     } catch (error) {
         console.error('Error loading grants data:', error);
         showError('Failed to load grants data');
@@ -547,4 +548,18 @@ function escapeHtml(text) {
 function showError(message) {
     console.error(message);
     // Could add user-facing error display here
+}
+
+// Update the last updated timestamp
+function updateLastUpdated() {
+    const lastUpdatedElement = document.getElementById('last-updated');
+    if (lastUpdatedElement) {
+        const now = new Date();
+        const options = { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric'
+        };
+        lastUpdatedElement.textContent = now.toLocaleDateString('en-US', options);
+    }
 }
